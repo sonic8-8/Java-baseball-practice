@@ -1,5 +1,6 @@
 package baseball;
 
+import baseball.io.ConsoleInputHandler;
 import baseball.io.ConsoleOutputHandler;
 
 import java.util.Random;
@@ -7,8 +8,8 @@ import java.util.Scanner;
 
 public class Application {
 
-    public static final Scanner SCANNER = new Scanner(System.in);
     private static final ConsoleOutputHandler consoleOutputHandler = new ConsoleOutputHandler();
+    private static final ConsoleInputHandler consoleInputHandler = new ConsoleInputHandler();
 
     private static int strike = 0;
     private static int ball = 0;
@@ -71,13 +72,12 @@ public class Application {
 
     private static int getUserActionFromUser() {
         consoleOutputHandler.printCommentForUserAction();
-        return SCANNER.nextInt();
+        return consoleInputHandler.getUserInput();
     }
 
     private static int getThreeDigitNumberFromUser() {
         consoleOutputHandler.printCommentForThreeDigitNumber();
-
-        return SCANNER.nextInt();
+        return consoleInputHandler.getUserInput();
     }
 
     private static boolean doesUserChooseToContinue(int select) {
