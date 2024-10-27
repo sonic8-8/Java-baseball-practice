@@ -20,22 +20,31 @@ public class Application {
     public static void main(String[] args) {
 
         consoleOutputHandler.showStartGameComment();
-        int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
 
         while (true) {
 
-            int[] digitsFromUserInput = getDigitsFromUserInput();
-            actOnDigits(randomDigits, digitsFromUserInput);
+            int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
 
-            if (doesUserWinTheGame()) {
-                consoleOutputHandler.printGameWinningComment();
+            while (true) {
 
-                int userAction = getUserActionFromUser();
-                if (doesUserChooseToContinue(userAction)) {
-                    gameStatus = CONTINUE;
+                if (doesUserWinTheGame()) {
+                    consoleOutputHandler.printGameWinningComment();
                     break;
                 }
+
+                int[] digitsFromUserInput = getDigitsFromUserInput();
+                actOnDigits(randomDigits, digitsFromUserInput);
             }
+
+            int userAction = getUserActionFromUser();
+            if (doesUserChooseToContinue(userAction)) {
+                gameStatus = CONTINUE;
+            }
+
+            if (doesUserChooseToEnd(userAction)) {
+                break;
+            }
+
         }
     }
 
@@ -94,6 +103,10 @@ public class Application {
 
     private static boolean doesUserChooseToContinue(int select) {
         return select == 1;
+    }
+
+    private static boolean doesUserChooseToEnd(int select) {
+        return select == 2;
     }
 
     private static boolean isWinningStrike() {
