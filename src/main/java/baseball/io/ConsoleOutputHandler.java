@@ -6,7 +6,7 @@ public class ConsoleOutputHandler {
         System.out.println("숫자 야구 게임을 시작합니다.");
     }
 
-    public void showGameHint(int strike, int ball) {
+    public void showStrikeAndBallCounts(int strike, int ball) {
         if (0 < strike && strike < 3) {
             System.out.println(strike + "스트라이크");
         }
@@ -28,7 +28,7 @@ public class ConsoleOutputHandler {
         System.out.println("게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.");
     }
 
-    public void printCommentForThreeDigitNumber() {
+    public void printCommentForNumber() {
         System.out.print("숫자를 입력해주세요 : ");
     }
 }
