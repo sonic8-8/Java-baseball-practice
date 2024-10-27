@@ -3,13 +3,14 @@ package baseball;
 import baseball.io.ConsoleInputHandler;
 import baseball.io.ConsoleOutputHandler;
 
-import java.util.Random;
-import java.util.Scanner;
-
 public class Application {
 
     private static final ConsoleOutputHandler consoleOutputHandler = new ConsoleOutputHandler();
     private static final ConsoleInputHandler consoleInputHandler = new ConsoleInputHandler();
+    private static final RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator();
+    public static final int CONTINUE = 0;
+    public static final int WIN = 1;
+    public static final int DEFAULT_DIGIT_COUNT = 3;
 
     private static int strike = 0;
     private static int ball = 0;
@@ -19,55 +20,66 @@ public class Application {
     public static void main(String[] args) {
 
         consoleOutputHandler.showStartGameComment();
-
-        Random random = new Random();
-        int random1 = getRandomOneDigitNumber(random);
-        int random2 = random.nextInt(9) + 1;
-        int random3 = random.nextInt(9) + 1;
+        int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
 
         while (true) {
 
-            int threeDigitNumber = getThreeDigitNumberFromUser();
+            int[] digitsFromUserInput = getDigitsFromUserInput();
+            actOnDigits(randomDigits, digitsFromUserInput);
 
-            if (threeDigitNumber < 100 || threeDigitNumber > 999) {
-                throw new IllegalArgumentException();
-            }
-
-            int number1 = threeDigitNumber / 100;
-            int number2 = (threeDigitNumber - number1 * 100) / 10;
-            int number3 = threeDigitNumber % 10;
-
-            if (number1 == number2 || number1 == number3 || number2 == number3) {
-                throw new IllegalArgumentException();
-            }
-
-            countStrikeAndBall(number1, random1, random2, random3, number2, number3);
-
-            consoleOutputHandler.showGameHint(strike, ball);
-
-            if (isWinningStrike()) {
+            if (doesUserWinTheGame()) {
                 consoleOutputHandler.printGameWinningComment();
-                gameStatus = 1;
-                break;
-            }
 
-            strike = 0;
-            ball = 0;
-
-            if (gameStatus == 1) {
                 int userAction = getUserActionFromUser();
-                
                 if (doesUserChooseToContinue(userAction)) {
-                    gameStatus = 0;
+                    gameStatus = CONTINUE;
                     break;
                 }
             }
         }
     }
 
-    private static int getRandomOneDigitNumber(Random random) {
-        int random1 = random.nextInt(9) + 1;
-        return random1;
+    private static void actOnDigits(int[] randomDigits, int[] digitsFromUserInput) {
+        countStrikeAndBall(randomDigits, digitsFromUserInput);
+        consoleOutputHandler.showStrikeAndBallCounts(strike, ball);
+
+        if (isWinningStrike()) {
+            gameStatus = WIN;
+        }
+
+        resetStrikeAndBall();
+    }
+
+    private static int[] getDigitsFromUserInput() {
+        int userInputNumber = getNumberFromUserInput();
+
+        if (isValidRange(userInputNumber)) {
+            throw new IllegalArgumentException();
+        }
+
+        int[] digitsFromUserInputNumber = splitDigitsFrom(userInputNumber);
+
+        if (hasDuplicates(digitsFromUserInputNumber)) {
+            throw new IllegalArgumentException();
+        }
+        return digitsFromUserInputNumber;
+    }
+
+    private static boolean doesUserWinTheGame() {
+        return gameStatus == WIN;
+    }
+
+    private static void resetStrikeAndBall() {
+        strike = 0;
+        ball = 0;
+    }
+
+    private static boolean hasDuplicates(int[] digitsFromUserInputNumber) {
+        return digitsFromUserInputNumber[0] == digitsFromUserInputNumber[1] || digitsFromUserInputNumber[0] == digitsFromUserInputNumber[2] || digitsFromUserInputNumber[1] == digitsFromUserInputNumber[2];
+    }
+
+    private static boolean isValidRange(int number) {
+        return number < 100 || number > 999;
     }
 
     private static int getUserActionFromUser() {
@@ -75,8 +87,8 @@ public class Application {
         return consoleInputHandler.getUserInput();
     }
 
-    private static int getThreeDigitNumberFromUser() {
-        consoleOutputHandler.printCommentForThreeDigitNumber();
+    private static int getNumberFromUserInput() {
+        consoleOutputHandler.printCommentForNumber();
         return consoleInputHandler.getUserInput();
     }
 
@@ -85,26 +97,34 @@ public class Application {
     }
 
     private static boolean isWinningStrike() {
-        return strike == 3;
+        return strike == DEFAULT_DIGIT_COUNT;
     }
 
-    private static void countStrikeAndBall(int number1, int random1, int random2, int random3, int number2, int number3) {
-        if (number1 == random1) {
+    private static void countStrikeAndBall(int[] randomDigits, int[] digitsFromUserInput) {
+        if (digitsFromUserInput[0] == randomDigits[0]) {
             strike++;
-        } else if (number1 == random2 || number1 == random3) {
+        } else if (digitsFromUserInput[0] == randomDigits[1] || digitsFromUserInput[0] == randomDigits[2]) {
             ball++;
         }
 
-        if (number2 == random2) {
+        if (digitsFromUserInput[1] == randomDigits[1]) {
             strike++;
-        } else if (number2 == random1 || number2 == random3) {
+        } else if (digitsFromUserInput[1] == randomDigits[0] || digitsFromUserInput[1] == randomDigits[2]) {
             ball++;
         }
 
-        if (number3 == random3) {
+        if (digitsFromUserInput[2] == randomDigits[2]) {
             strike++;
-        } else if (number3 == random1 || number3 == random2) {
+        } else if (digitsFromUserInput[2] == randomDigits[0] || digitsFromUserInput[2] == randomDigits[1]) {
             ball++;
         }
+    }
+
+    private static int[] splitDigitsFrom(int number) {
+        int[] digits = new int[DEFAULT_DIGIT_COUNT];
+        digits[0] = number / 100;
+        digits[1] = (number - digits[0] * 100) / 10;
+        digits[2] = number % 10;
+        return digits;
     }
 }
