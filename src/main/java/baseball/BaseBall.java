@@ -12,8 +12,8 @@ public class BaseBall {
     public static final int WIN = 1;
     public static final int DEFAULT_DIGIT_COUNT = 3;
 
-    private static int strike = 0;
-    private static int ball = 0;
+    private static int strikes = 0;
+    private static int balls = 0;
     private static int gameStatus = 0;
 
     public void run() {
@@ -22,10 +22,13 @@ public class BaseBall {
 
         while (true) {
 
-            int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
+//            int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
 
             while (true) {
-                if (doesUserWinTheGame()) {
+
+                int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
+
+                if (gameStatus == WIN) {
                     consoleOutputHandler.printGameWinningComment();
                     break;
                 }
@@ -48,7 +51,7 @@ public class BaseBall {
 
     private void actOnDigits(int[] randomDigits, int[] digitsFromUserInput) {
         countStrikeAndBall(randomDigits, digitsFromUserInput);
-        consoleOutputHandler.showStrikeAndBallCounts(strike, ball);
+        consoleOutputHandler.showStrikeAndBallCounts(strikes, balls);
 
         if (isWinningStrike()) {
             gameStatus = WIN;
@@ -77,8 +80,8 @@ public class BaseBall {
     }
 
     private void resetStrikeAndBall() {
-        strike = 0;
-        ball = 0;
+        strikes = 0;
+        balls = 0;
     }
 
     private boolean hasDuplicates(int[] digitsFromUserInputNumber) {
@@ -108,26 +111,26 @@ public class BaseBall {
     }
 
     private boolean isWinningStrike() {
-        return strike == DEFAULT_DIGIT_COUNT;
+        return strikes == DEFAULT_DIGIT_COUNT;
     }
 
     private void countStrikeAndBall(int[] randomDigits, int[] digitsFromUserInput) {
         if (digitsFromUserInput[0] == randomDigits[0]) {
-            strike++;
+            strikes++;
         } else if (digitsFromUserInput[0] == randomDigits[1] || digitsFromUserInput[0] == randomDigits[2]) {
-            ball++;
+            balls++;
         }
 
         if (digitsFromUserInput[1] == randomDigits[1]) {
-            strike++;
+            strikes++;
         } else if (digitsFromUserInput[1] == randomDigits[0] || digitsFromUserInput[1] == randomDigits[2]) {
-            ball++;
+            balls++;
         }
 
         if (digitsFromUserInput[2] == randomDigits[2]) {
-            strike++;
+            strikes++;
         } else if (digitsFromUserInput[2] == randomDigits[0] || digitsFromUserInput[2] == randomDigits[1]) {
-            ball++;
+            balls++;
         }
     }
 
