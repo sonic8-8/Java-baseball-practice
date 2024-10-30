@@ -16,19 +16,18 @@ public class BaseBall {
     private static int balls = 0;
     private static int gameStatus = 0;
 
+
     public void run() {
 
         consoleOutputHandler.showStartGameComment();
 
         while (true) {
 
-//            int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
+            int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
 
             while (true) {
 
-                int[] randomDigits = randomNumberGenerator.getRandomDigits(DEFAULT_DIGIT_COUNT);
-
-                if (gameStatus == WIN) {
+                if (doesUserWinTheGame()) {
                     consoleOutputHandler.printGameWinningComment();
                     break;
                 }
